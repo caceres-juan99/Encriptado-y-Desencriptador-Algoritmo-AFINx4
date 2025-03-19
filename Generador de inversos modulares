@@ -1,0 +1,38 @@
+from math import gcd
+
+# Definir n como constante
+n = 32**4  # 1048576
+
+# Función para calcular el inverso modular de a
+def inverso_modular(a, n):
+    if gcd(a, n) != 1:
+        return None  # No existe inverso modular si a y n no son coprimos
+    else:
+        # Utilizar el algoritmo extendido de Euclides para encontrar el inverso
+        t, newt = 0, 1
+        r, newr = n, a
+        while newr != 0:
+            quotient = r // newr
+            t, newt = newt, t - quotient * newt
+            r, newr = newr, r - quotient * newr
+        if r > 1:
+            return None  # No existe inverso modular
+        if t < 0:
+            t = t + n
+        return t
+
+# Función para generar la tabla de inversos modulares
+def generar_tabla_inversos(nombre_archivo):
+    mitad = (n // 2) + 1  # Clave superior a la mitad más uno
+    with open(nombre_archivo, 'w') as archivo:
+        for a in range(mitad, n):  # Recorrer solo los valores superiores a la mitad
+            inverso_a = inverso_modular(a, n)
+            if inverso_a is not None:  # Solo guardar los valores que tienen inverso modular
+                archivo.write(f"{a},{inverso_a}\n")
+
+# Nombre del archivo donde se guardará la tabla
+nombre_archivo = 'tabla_inversos_modulares.txt'
+
+# Llamar a la función para generar la tabla
+generar_tabla_inversos(nombre_archivo)
+print(f"Tabla de inversos modulares guardada en {nombre_archivo}")
